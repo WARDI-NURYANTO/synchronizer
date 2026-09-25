@@ -5,20 +5,24 @@ definePage({
     action: "read",
     subject: "Web",
   },
-});
-const btnLoading = ref(false);
-const sekolah_id = ref();
-const sekolah = ref();
-const items = ref([]);
-const error = ref(false);
-const loadingBody = ref(true);
-const isurl_erapor = ref(true);
-const versiApp = ref(null);
+})
+
+const btnLoading = ref(false)
+const sekolah_id = ref()
+const sekolah = ref()
+const items = ref([])
+const error = ref(false)
+const loadingBody = ref(true)
+const isurl_erapor = ref(true)
+const versiApp = ref(null)
+
 const clickMe = async () => {
-  btnLoading.value = true;
-  const find = items.value.find((s) => {
-    return s.sekolah_id === sekolah_id.value;
-  });
+  btnLoading.value = true
+
+  const find = items.value.find(s => {
+    return s.sekolah_id === sekolah_id.value
+  })
+
   await $api("/sekolah", {
     method: "POST",
     body: {
@@ -26,87 +30,101 @@ const clickMe = async () => {
       pengguna_id: find?.pengguna?.pengguna_id,
     },
     async onResponse({ response }) {
-      let getData = response._data;
-      await fetchData();
+      let getData = response._data
+      await fetchData()
     },
-  });
-};
+  })
+}
+
 onMounted(async () => {
-  await fetchData();
-});
-const isDisabled = ref(false);
-const jumlah = ref(0);
-const table_sync = ref([]);
-const semesterId = ref();
-const tahunAjaranId = ref();
-const cekSekolah = ref(false);
+  await fetchData()
+})
+
+const isDisabled = ref(false)
+const jumlah = ref(0)
+const table_sync = ref([])
+const semesterId = ref()
+const tahunAjaranId = ref()
+const semesterNama = ref()
+const cekSekolah = ref(false)
+
 const fetchData = async () => {
-  loadingBody.value = true;
-  isDisabled.value = true;
+  loadingBody.value = true
+  isDisabled.value = true
   try {
-    const response = await useApi(createUrl("/sekolah"));
-    let getData = response.data.value;
+    const response = await useApi(createUrl("/sekolah"))
+    let getData = response.data.value
     if (getData) {
-      items.value = getData.sekolah;
-      sekolah.value = getData.user?.sekolah;
-      error.value = getData.error;
-      btnLoading.value = false;
-      jumlah.value = getData.jumlah;
-      table_sync.value = getData.table_sync;
-      isurl_erapor.value = getData.user?.erapor?.url_erapor ? false : true;
-      url_erapor.value = getData.user?.erapor?.url_erapor;
-      semesterId.value = getData.user?.semester?.semester_id;
-      tahunAjaranId.value = getData.user?.semester?.tahun_ajaran_id;
-      cekSekolah.value = getData.cek_sekolah?.success;
-      versiApp.value = getData.versiApp;
+      items.value = getData.sekolah
+      sekolah.value = getData.user?.sekolah
+      error.value = getData.error
+      btnLoading.value = false
+      jumlah.value = getData.jumlah
+      table_sync.value = getData.table_sync
+      isurl_erapor.value = getData.user?.erapor?.url_erapor ? false : true
+      url_erapor.value = getData.user?.erapor?.url_erapor
+      semesterId.value = getData.user?.semester?.semester_id
+      tahunAjaranId.value = getData.user?.semester?.tahun_ajaran_id
+      semesterNama.value = getData.user?.semester?.nama
+      cekSekolah.value = getData.cek_sekolah?.success
+      versiApp.value = getData.versiApp
     }
   } catch (error) {
-    console.error(error);
+    console.error(error)
   } finally {
-    isDisabled.value = false;
-    loadingBody.value = false;
+    isDisabled.value = false
+    loadingBody.value = false
   }
-};
-const isDialogVisible = ref(false);
+}
+
+const isDialogVisible = ref(false)
+
 const reset = async () => {
-  btnLoading.value = true;
-  isDialogVisible.value = false;
-  await useApi(createUrl("/reset"));
-  btnLoading.value = false;
-  appLogout();
-};
-const router = useRouter();
-const ability = useAbility();
-const userData = useCookie("userData");
+  btnLoading.value = true
+  isDialogVisible.value = false
+  await useApi(createUrl("/reset"))
+  btnLoading.value = false
+  appLogout()
+}
+
+const router = useRouter()
+const ability = useAbility()
+const userData = useCookie("userData")
+
 const appLogout = async () => {
   //console.log("appLogout");
-  userData.value = null;
-  useCookie("accessToken").value = null;
-  useCookie("userData").value = null;
-  useCookie("userAbilityRules").value = null;
-  ability.update([]);
+  userData.value = null
+  useCookie("accessToken").value = null
+  useCookie("userData").value = null
+  useCookie("userAbilityRules").value = null
+  ability.update([])
+
   //window.location.replace('/login')
   await nextTick(() => {
-    router.replace("/login");
-  });
-};
+    router.replace("/login")
+  })
+}
+
 const connectToDapo = async () => {
   //console.log("connectToDapo");
-  await useNonApi(createUrl("normalkan"));
-  await fetchData();
-};
+  await useNonApi(createUrl("normalkan"))
+  await fetchData()
+}
+
 const notif = ref({
   icon: null,
   title: null,
   text: null,
   color: null,
-});
-const sendMessage = ref(null);
-const isAlertVisible = ref(false);
+})
+
+const sendMessage = ref(null)
+const isAlertVisible = ref(false)
+
 const kirimData = async (data, aksi, count, next) => {
   if (data) {
-    btnLoading.value = true;
-    sendMessage.value = `Mengirim data ${data} (${count})`;
+    btnLoading.value = true
+    sendMessage.value = `Mengirim data ${data} (${count})`
     await $api("/kirim-data", {
       method: "POST",
       body: {
@@ -119,44 +137,48 @@ const kirimData = async (data, aksi, count, next) => {
         count: count,
       },
       async onResponse({ response }) {
-        let getData = response._data;
+        let getData = response._data
+
         //console.log(next);
         if (next) {
           if (getData.next) {
-            let nextData = table_sync.value.find((s) => {
-              return s.aksi === getData.next;
-            });
+            let nextData = table_sync.value.find(s => {
+              return s.aksi === getData.next
+            })
+
             //console.log(nextData);
             if (nextData) {
-              kirimData(nextData.data, nextData.aksi, nextData.count, getData.next);
+              kirimData(nextData.data, nextData.aksi, nextData.count, getData.next)
             }
           } else {
-            notif.value = getData;
-            isAlertVisible.value = true;
-            btnLoading.value = false;
-            sendMessage.value = null;
+            notif.value = getData
+            isAlertVisible.value = true
+            btnLoading.value = false
+            sendMessage.value = null
           }
         } else {
-          notif.value = getData;
-          isAlertVisible.value = true;
-          btnLoading.value = false;
-          sendMessage.value = null;
+          notif.value = getData
+          isAlertVisible.value = true
+          btnLoading.value = false
+          sendMessage.value = null
         }
       },
-    });
+    })
   } else {
-    let ptk = table_sync.value.find((s) => {
-      return s.aksi === "ptk";
-    });
-    kirimData(ptk.data, ptk.aksi, ptk.count, true);
+    let ptk = table_sync.value.find(s => {
+      return s.aksi === "ptk"
+    })
+    kirimData(ptk.data, ptk.aksi, ptk.count, true)
   }
-};
+}
+
 const regisErapor = async () => {
-  const getSekolah = items.value.find((s) => {
-    return s.sekolah_id === sekolah.value?.sekolah_id;
-  });
-  btnLoading.value = true;
-  sendMessage.value = `Proses Registrasi ke e-Rapor SMK v8`;
+  const getSekolah = items.value.find(s => {
+    return s.sekolah_id === sekolah.value?.sekolah_id
+  })
+
+  btnLoading.value = true
+  sendMessage.value = `Proses Registrasi ke e-Rapor SMK v8`
   await $api("/register", {
     method: "POST",
     body: {
@@ -164,24 +186,27 @@ const regisErapor = async () => {
       url_erapor: url_erapor.value,
     },
     async onResponse({ response }) {
-      let getData = response._data;
-      notif.value = getData;
-      isAlertVisible.value = true;
-      btnLoading.value = false;
-      sendMessage.value = null;
+      let getData = response._data
+      notif.value = getData
+      isAlertVisible.value = true
+      btnLoading.value = false
+      sendMessage.value = null
       await nextTick(async () => {
-        await fetchData();
-      });
+        await fetchData()
+      })
     },
-  });
-};
-const url_erapor = ref();
-const refVForm = ref();
+  })
+}
+
+const url_erapor = ref()
+const refVForm = ref()
+
 const simpanUrl = () => {
   refVForm.value?.validate().then(({ valid: isValid }) => {
-    if (isValid) storeUrl();
-  });
-};
+    if (isValid) storeUrl()
+  })
+}
+
 const storeUrl = async () => {
   await $api("/kirim-data", {
     method: "POST",
@@ -191,27 +216,33 @@ const storeUrl = async () => {
       aksi: "url",
     },
     async onResponse({ response }) {
-      let getData = response._data;
-      notif.value = getData;
-      isAlertVisible.value = true;
-      await fetchData();
+      let getData = response._data
+      notif.value = getData
+      isAlertVisible.value = true
+      await fetchData()
     },
-  });
-};
+  })
+}
+
 const resetApp = () => {
-  isDialogVisible.value = true;
-};
+  isDialogVisible.value = true
+}
 </script>
+
 <template>
   <VContainer>
     <VCard color="#007BB6">
       <VCardItem>
         <template #prepend>
-          <VIcon size="1.9rem" color="white" icon="tabler-database" />
+          <VIcon
+            size="1.9rem"
+            color="white"
+            icon="tabler-database"
+          />
         </template>
         <VCardTitle class="text-white">
-          e-Rapor SMK Synchronizer {{ versiApp }}</VCardTitle
-        >
+          e-Rapor SMK Synchronizer {{ versiApp }}
+        </VCardTitle>
       </VCardItem>
       <VCardText class="d-flex justify-space-between align-center flex-wrap">
         <div class="text-no-wrap">
@@ -219,38 +250,86 @@ const resetApp = () => {
         </div>
 
         <div class="d-flex align-center">
-          <IconBtn class="me-1" @click="appLogout">
-            <VTooltip activator="parent" location="left"> Logout </VTooltip>
+          <IconBtn
+            class="me-1"
+            @click="appLogout"
+          >
+            <VTooltip
+              activator="parent"
+              location="left"
+            >
+              Logout
+            </VTooltip>
             <VIcon icon="tabler-power" />
           </IconBtn>
-          <IconBtn class="me-1" @click="resetApp" v-if="sekolah">
-            <VTooltip activator="parent" location="left"> Reset </VTooltip>
+          <IconBtn
+            v-if="sekolah"
+            class="me-1"
+            @click="resetApp"
+          >
+            <VTooltip
+              activator="parent"
+              location="left"
+            >
+              Reset
+            </VTooltip>
             <VIcon icon="tabler-restore" />
           </IconBtn>
         </div>
       </VCardText>
     </VCard>
-    <VCard class="mt-4" v-if="error">
+    <VCard
+      v-if="error"
+      class="mt-4"
+    >
       <VCardTitle> Aplikasi tidak terhubung ke Dapodik! </VCardTitle>
       <VCardItem>
-        <VBtn block size="large" @click="connectToDapo"
-          >Hubungkan Aplikasi ke Dapodik</VBtn
+        <VBtn
+          block
+          size="large"
+          @click="connectToDapo"
         >
+          Hubungkan Aplikasi ke Dapodik
+        </VBtn>
       </VCardItem>
     </VCard>
-    <div class="mt-4" v-else>
-      <VRow class="match-height" v-if="loadingBody">
-        <VCol cols="6" xl="8" md="8" sm="6">
+    <div
+      v-else
+      class="mt-4"
+    >
+      <VRow
+        v-if="loadingBody"
+        class="match-height"
+      >
+        <VCol
+          cols="6"
+          xl="8"
+          md="8"
+          sm="6"
+        >
           <VCard>
             <VCardText class="text-center">
-              <VProgressCircular :size="60" indeterminate color="error" />
+              <VProgressCircular
+                :size="60"
+                indeterminate
+                color="error"
+              />
             </VCardText>
           </VCard>
         </VCol>
-        <VCol cols="6" xl="4" md="4" sm="6">
+        <VCol
+          cols="6"
+          xl="4"
+          md="4"
+          sm="6"
+        >
           <VCard>
             <VCardText class="text-center">
-              <VProgressCircular :size="60" indeterminate color="error" />
+              <VProgressCircular
+                :size="60"
+                indeterminate
+                color="error"
+              />
             </VCardText>
           </VCard>
         </VCol>
@@ -259,12 +338,15 @@ const resetApp = () => {
         <VRow>
           <VCol cols="12">
             <VCard>
-              <VForm ref="refVForm" @submit.prevent="simpanUrl">
+              <VForm
+                ref="refVForm"
+                @submit.prevent="simpanUrl"
+              >
                 <VCardText>
                   <AppTextField
+                    v-model="url_erapor"
                     label="URL e-Rapor SMK v8. Contoh: http://localhost:8154 atau https://erapor.sekolahku.sch.id (Tanpa garis miring di akhir)"
                     placeholder="URL e-Rapor SMK v8"
-                    v-model="url_erapor"
                     :loading="btnLoading"
                     :disabled="btnLoading"
                     :rules="[requiredValidator, urlValidator]"
@@ -276,8 +358,15 @@ const resetApp = () => {
                         :loading="btnLoading"
                         :disabled="btnLoading"
                       >
-                        <VIcon icon="tabler-device-floppy" color="#fff" size="22" />
-                        <span v-if="$vuetify.display.mdAndUp" class="ms-3">Simpan</span>
+                        <VIcon
+                          icon="tabler-device-floppy"
+                          color="#fff"
+                          size="22"
+                        />
+                        <span
+                          v-if="$vuetify.display.mdAndUp"
+                          class="ms-3"
+                        >Simpan</span>
                       </VBtn>
                     </template>
                   </AppTextField>
@@ -287,63 +376,109 @@ const resetApp = () => {
           </VCol>
         </VRow>
         <VRow class="match-height">
-          <VCol cols="12" xl="8" md="8" sm="6">
+          <VCol
+            cols="12"
+            xl="8"
+            md="8"
+            sm="6"
+          >
             <VCard>
               <VTable class="text-no-wrap">
                 <tbody>
                   <tr>
-                    <td rowspan="4" width="10%" style="border: none">
+                    <td
+                      rowspan="5"
+                      width="10%"
+                      style="border: none"
+                    >
                       <img
                         src="/images/logo-erapor.png"
                         alt="Logo e-Rapor SMK"
                         style="max-width: 100px"
-                      />
+                      >
                     </td>
-                    <td width="30%" style="border: none">&nbsp;&nbsp;&nbsp;NPSN</td>
-                    <td width="60%" style="border: none">{{ sekolah.npsn }}</td>
+                    <td
+                      width="30%"
+                      style="border: none"
+                    >
+                      &nbsp;&nbsp;&nbsp;NPSN
+                    </td>
+                    <td
+                      width="60%"
+                      style="border: none"
+                    >
+                      {{ sekolah.npsn }}
+                    </td>
                   </tr>
                   <tr>
-                    <td style="border: none">Nama Sekolah</td>
-                    <td style="border: none">{{ sekolah.nama }}</td>
+                    <td style="border: none">
+                      Nama Sekolah
+                    </td>
+                    <td style="border: none">
+                      {{ sekolah.nama }}
+                    </td>
                   </tr>
                   <tr>
-                    <td style="border: none">Alamat</td>
-                    <td style="border: none">{{ sekolah.alamat_jalan }}</td>
+                    <td style="border: none">
+                      Alamat
+                    </td>
+                    <td style="border: none">
+                      {{ sekolah.alamat_jalan }}
+                    </td>
                   </tr>
                   <tr>
-                    <td style="border: none">Akun Dapodik</td>
-                    <td style="border: none">{{ sekolah.pengguna?.username }}</td>
+                    <td style="border: none">
+                      Akun Dapodik
+                    </td>
+                    <td style="border: none">
+                      {{ sekolah.pengguna?.username }}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="border: none">
+                      Semester Aktif
+                    </td>
+                    <td style="border: none">
+                      <VChip
+                        color="success"
+                        size="small"
+                        class="font-weight-bold"
+                      >
+                        {{ semesterNama || '2026/2027 Ganjil' }}
+                      </VChip>
+                    </td>
                   </tr>
                 </tbody>
               </VTable>
             </VCard>
           </VCol>
-          <VCol cols="12" xl="4" md="4" sm="6">
+          <VCol
+            cols="12"
+            xl="4"
+            md="4"
+            sm="6"
+          >
             <VCard>
               <VCardText class="text-center pt-12">
                 <VBtn
+                  v-if="cekSekolah"
                   block
                   :loading="btnLoading"
                   :disabled="btnLoading || isurl_erapor"
                   size="large"
                   @click="kirimData(null, null, null, false)"
-                  v-if="cekSekolah"
                 >
-                  <font-awesome-icon
-                    icon="fa-solid fa-cloud-arrow-up"
-                  />&nbsp;&nbsp;&nbsp;<strong>KIRIM DATA</strong>
+                  <FontAwesomeIcon icon="fa-solid fa-cloud-arrow-up" />&nbsp;&nbsp;&nbsp;<strong>KIRIM DATA</strong>
                 </VBtn>
                 <VBtn
+                  v-else
                   block
                   :loading="btnLoading"
                   :disabled="btnLoading || isurl_erapor"
                   size="large"
                   @click="regisErapor"
-                  v-else
                 >
-                  <font-awesome-icon
-                    icon="fa-solid fa-cloud-arrow-up"
-                  />&nbsp;&nbsp;&nbsp;<strong>Register e-Rapor</strong>
+                  <FontAwesomeIcon icon="fa-solid fa-cloud-arrow-up" />&nbsp;&nbsp;&nbsp;<strong>Register e-Rapor</strong>
                 </VBtn>
               </VCardText>
             </VCard>
@@ -351,11 +486,23 @@ const resetApp = () => {
         </VRow>
         <VRow v-if="!loadingBody">
           <VCol cols="12">
-            <VAlert color="error" class="text-center" v-if="sendMessage">
-              <h3 class="text-white">{{ sendMessage }}</h3>
+            <VAlert
+              v-if="sendMessage"
+              color="error"
+              class="text-center"
+            >
+              <h3 class="text-white">
+                {{ sendMessage }}
+              </h3>
             </VAlert>
-            <VAlert color="secondary" class="text-center" v-else>
-              <h3 class="text-white">DATA YANG AKAN DIKIRIM</h3>
+            <VAlert
+              v-else
+              color="secondary"
+              class="text-center"
+            >
+              <h3 class="text-white">
+                DATA YANG AKAN DIKIRIM
+              </h3>
             </VAlert>
           </VCol>
         </VRow>
@@ -363,25 +510,53 @@ const resetApp = () => {
           <VCol cols="12">
             <VCard v-if="loadingBody">
               <VCardText class="text-center">
-                <VProgressCircular :size="60" indeterminate color="error" />
+                <VProgressCircular
+                  :size="60"
+                  indeterminate
+                  color="error"
+                />
               </VCardText>
             </VCard>
             <VCard v-else>
               <VTable class="text-no-wrap">
                 <thead>
                   <tr>
-                    <th class="text-center" width="5%">No</th>
-                    <th width="65%">Data</th>
-                    <th class="text-center" width="15%">Jml Data</th>
-                    <th class="text-center" width="15%">Kirim Satuan</th>
+                    <th
+                      class="text-center"
+                      width="5%"
+                    >
+                      No
+                    </th>
+                    <th width="65%">
+                      Data
+                    </th>
+                    <th
+                      class="text-center"
+                      width="15%"
+                    >
+                      Jml Data
+                    </th>
+                    <th
+                      class="text-center"
+                      width="15%"
+                    >
+                      Kirim Satuan
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
                   <template v-if="jumlah">
-                    <tr v-for="(item, index) in table_sync" :key="index">
-                      <td class="text-center">{{ index + 1 }}</td>
+                    <tr
+                      v-for="(item, index) in table_sync"
+                      :key="index"
+                    >
+                      <td class="text-center">
+                        {{ index + 1 }}
+                      </td>
                       <td>{{ item.data }}</td>
-                      <td class="text-center">{{ item.count }}</td>
+                      <td class="text-center">
+                        {{ item.count }}
+                      </td>
                       <td class="text-center">
                         <VBtn
                           :loading="btnLoading"
@@ -396,7 +571,10 @@ const resetApp = () => {
                   </template>
                   <template v-else>
                     <tr>
-                      <td colspan="4" class="text-center">
+                      <td
+                        colspan="4"
+                        class="text-center"
+                      >
                         Tidak ada data yang mengalami perubahan
                       </td>
                     </tr>
@@ -404,8 +582,15 @@ const resetApp = () => {
                 </tbody>
                 <tfoot>
                   <tr>
-                    <th colspan="3" class="text-right">Jumlah</th>
-                    <th class="text-center">{{ jumlah }}</th>
+                    <th
+                      colspan="3"
+                      class="text-right"
+                    >
+                      Jumlah
+                    </th>
+                    <th class="text-center">
+                      {{ jumlah }}
+                    </th>
                   </tr>
                 </tfoot>
               </VTable>
@@ -428,12 +613,19 @@ const resetApp = () => {
               <template #append>
                 <VBtn
                   :icon="$vuetify.display.smAndDown"
-                  @click="clickMe"
                   :loading="btnLoading"
                   :disabled="btnLoading"
+                  @click="clickMe"
                 >
-                  <VIcon icon="tabler-device-floppy" color="#fff" size="22" />
-                  <span v-if="$vuetify.display.mdAndUp" class="ms-3">Simpan</span>
+                  <VIcon
+                    icon="tabler-device-floppy"
+                    color="#fff"
+                    size="22"
+                  />
+                  <span
+                    v-if="$vuetify.display.mdAndUp"
+                    class="ms-3"
+                  >Simpan</span>
                 </VBtn>
               </template>
             </AppAutocomplete>
@@ -441,23 +633,33 @@ const resetApp = () => {
         </VCard>
       </template>
       <ShowAlert
+        v-if="notif.color"
+        v-model:is-snackbar-visible="isAlertVisible"
         :color="notif.color"
         :icon="notif.icon"
         :title="notif.title"
         :text="notif.text"
         :disable-time-out="false"
-        v-model:isSnackbarVisible="isAlertVisible"
-        v-if="notif.color"
-      ></ShowAlert>
-      <VDialog v-model="isDialogVisible" persistent class="v-dialog-sm">
+      />
+      <VDialog
+        v-model="isDialogVisible"
+        persistent
+        class="v-dialog-sm"
+      >
         <DialogCloseBtn @click="isDialogVisible = !isDialogVisible" />
         <VCard title="Apakah Anda yakin?">
           <VCardText> Tindakan ini akan mengambalikan Aplikasi ke awal! </VCardText>
           <VCardText class="d-flex justify-end gap-3 flex-wrap">
-            <VBtn color="secondary" variant="tonal" @click="isDialogVisible = false">
+            <VBtn
+              color="secondary"
+              variant="tonal"
+              @click="isDialogVisible = false"
+            >
               Batal
             </VBtn>
-            <VBtn @click="reset"> Yakin </VBtn>
+            <VBtn @click="reset">
+              Yakin
+            </VBtn>
           </VCardText>
         </VCard>
       </VDialog>

@@ -96,15 +96,15 @@ let currentSchoolId = '90e54911-31f5-e011-b844-311ba0c310c1';
 let dapodikConnected = true;
 
 const initialSyncCounts: Record<string, number> = {
-  ptk: 48,
-  rombel: 24,
-  pd_aktif: 720,
-  pd_keluar: 12,
-  anggota_matpil: 150,
-  pembelajaran: 340,
-  ekskul: 16,
-  anggota_ekskul: 95,
-  dudi: 15,
+  ptk: 85,
+  rombel: 36,
+  pd_aktif: 1250,
+  pd_keluar: 8,
+  anggota_matpil: 420,
+  pembelajaran: 680,
+  ekskul: 18,
+  anggota_ekskul: 780,
+  dudi: 45,
 };
 
 let syncCounts = { ...initialSyncCounts };
@@ -190,9 +190,9 @@ app.get('/api/sekolah', (_req: Request, res: Response) => {
         url_erapor: activeSchool?.url_erapor || '',
       },
       semester: {
-        semester_id: '20241',
-        tahun_ajaran_id: '2024',
-        nama: '2024/2025 Ganjil',
+        semester_id: '20261',
+        tahun_ajaran_id: '2026',
+        nama: '2026/2027 Ganjil',
         periode_aktif: 1,
       },
     },

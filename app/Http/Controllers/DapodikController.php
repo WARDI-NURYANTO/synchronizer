@@ -69,18 +69,6 @@ class DapodikController extends Controller
                     'data' => 'Rombongan Belajar',
                     'aksi' => 'rombel',
                     'count' => RombonganBelajar::where(function($query) use ($user){
-                        $query->whereHas('wali_kelas', function($query) use ($user){
-                            $query->where('soft_delete', 0);
-                            $query->whereHas('ptk_terdaftar', function($query) use ($user){
-                                $query->where('sekolah_id', $user->sekolah_id);
-                                $query->whereNull('jenis_keluar_id');
-                                $query->where('soft_delete', 0);
-                                $query->whereHas('tahun_ajaran', function($query){
-                                    $query->where('soft_delete', 0);
-                                    $query->where('periode_aktif', 1);
-                                });
-                            });
-                        });
                         $query->whereHas('semester', function($query){
                             $query->where('soft_delete', 0);
                             $query->where('periode_aktif', 1);
@@ -95,10 +83,10 @@ class DapodikController extends Controller
                     'aksi' => 'pd_aktif',
                     'count' => PesertaDidik::where(function($query) use ($user){
                         $query->whereHas('registrasi_peserta_didik', function($query) use ($user){
-                            $query->whereNotIn('jenis_keluar_id', ['2', '3', '4', '5', '6', '7', '8', '9']);
-                            $query->where('soft_delete', 0);
-                            $query->where('sekolah_id', $user->sekolah_id);
-                            $query->orWhereNull('jenis_keluar_id');
+                            $query->where(function($q){
+                                $q->whereNull('jenis_keluar_id')
+                                  ->orWhereNotIn('jenis_keluar_id', ['1', '2', '3', '4', '5', '6', '7', '8', '9']);
+                            });
                             $query->where('soft_delete', 0);
                             $query->where('sekolah_id', $user->sekolah_id);
                         });
@@ -110,19 +98,7 @@ class DapodikController extends Controller
                                 $query->whereHas('semester', function($query){
                                     $query->where('periode_aktif', 1);
                                 });
-                                //$query->whereIn('jenis_rombel', [1, 8, 9]);
-                                $query->where('jenis_rombel', 1);
-                                $query->whereHas('wali_kelas', function($query) use ($user){
-                                    $query->where('soft_delete', 0);
-                                    $query->whereHas('ptk_terdaftar', function($query) use ($user){
-                                        $query->where('sekolah_id', $user->sekolah_id);
-                                        $query->whereHas('tahun_ajaran', function($query){
-                                            $query->where('periode_aktif', 1);
-                                        });
-                                        $query->whereNull('jenis_keluar_id');
-                                        $query->where('soft_delete', 0);
-                                    });
-                                });
+                                $query->whereIn('jenis_rombel', [1, 8, 9, 16]);
                             });
                         });
                     })->count(),
@@ -132,7 +108,7 @@ class DapodikController extends Controller
                     'aksi' => 'pd_keluar',
                     'count' => PesertaDidik::where(function($query) use ($user){
                         $query->whereHas('registrasi_peserta_didik', function($query) use ($user){
-                            $query->whereIn('jenis_keluar_id', ['2', '3', '4', '5', '6', '7', '8', '9']);
+                            $query->whereIn('jenis_keluar_id', ['1', '2', '3', '4', '5', '6', '7', '8', '9']);
                             $query->whereBetween('tanggal_keluar', $this->periode_aktif());
                             $query->where('soft_delete', 0);
                             $query->where('sekolah_id', $user->sekolah_id);
@@ -145,18 +121,7 @@ class DapodikController extends Controller
                                 $query->whereHas('semester', function($query){
                                     $query->where('periode_aktif', 1);
                                 });
-                                $query->where('jenis_rombel', 1);
-                                $query->whereHas('wali_kelas', function($query) use ($user){
-                                    $query->where('soft_delete', 0);
-                                    $query->whereHas('ptk_terdaftar', function($query) use ($user){
-                                        $query->where('sekolah_id', $user->sekolah_id);
-                                        $query->whereHas('tahun_ajaran', function($query){
-                                            $query->where('periode_aktif', 1);
-                                        });
-                                        $query->whereNull('jenis_keluar_id');
-                                        $query->where('soft_delete', 0);
-                                    });
-                                });
+                                $query->whereIn('jenis_rombel', [1, 8, 9, 16]);
                             });
                         });
                     })->count(),
@@ -172,17 +137,6 @@ class DapodikController extends Controller
                             $query->where('sekolah_id', $user->sekolah_id);
                             $query->where('soft_delete', 0);
                             $query->where('jenis_rombel', 16);
-                            $query->whereHas('wali_kelas', function($query) use ($user){
-                                $query->where('soft_delete', 0);
-                                $query->whereHas('ptk_terdaftar', function($query) use ($user){
-                                    $query->where('sekolah_id', $user->sekolah_id);
-                                    $query->whereHas('tahun_ajaran', function($query){
-                                        $query->where('periode_aktif', 1);
-                                    });
-                                    $query->whereNull('jenis_keluar_id');
-                                    $query->where('soft_delete', 0);
-                                });
-                            });
                         });
                         $query->whereHas('peserta_didik', function($query){
                             $query->where('peserta_didik.soft_delete', 0);
@@ -204,31 +158,12 @@ class DapodikController extends Controller
                             });
                             $query->where('sekolah_id', $user->sekolah_id);
                             $query->whereIn('jenis_rombel', [1, 8, 9, 16]);
-                            $query->whereHas('wali_kelas', function($query) use ($user){
-                                $query->where('soft_delete', 0);
-                                $query->whereHas('ptk_terdaftar', function($query) use ($user){
-                                    $query->where('sekolah_id', $user->sekolah_id);
-                                    $query->whereHas('tahun_ajaran', function($query){
-                                        $query->where('periode_aktif', 1);
-                                    });
-                                    $query->whereNull('jenis_keluar_id');
-                                    $query->where('soft_delete', 0);
-                                });
-                            });
                         });
                         $query->whereHas('ptk_terdaftar', function($query) use ($user){
                             $query->where('ptk.soft_delete', 0);
                             $query->where('ptk_terdaftar.soft_delete', 0);
                             $query->whereNull('jenis_keluar_id');
                             $query->where('sekolah_id', $user->sekolah_id);
-                            $query->whereHas('ptk_terdaftar', function($query) use ($user){
-                                $query->where('sekolah_id', $user->sekolah_id);
-                                $query->whereHas('tahun_ajaran', function($query){
-                                    $query->where('periode_aktif', 1);
-                                });
-                                $query->whereNull('jenis_keluar_id');
-                                $query->where('soft_delete', 0);
-                            });
                         });
                     })->count(),
                 ],
@@ -244,17 +179,6 @@ class DapodikController extends Controller
                             });
                             $query->where('sekolah_id', $user->sekolah_id);
                             $query->where('jenis_rombel', 51);
-                            $query->whereHas('wali_kelas', function($query) use ($user){
-                                $query->where('soft_delete', 0);
-                                $query->whereHas('ptk_terdaftar', function($query) use ($user){
-                                    $query->where('sekolah_id', $user->sekolah_id);
-                                    $query->whereHas('tahun_ajaran', function($query){
-                                        $query->where('periode_aktif', 1);
-                                    });
-                                    $query->whereNull('jenis_keluar_id');
-                                    $query->where('soft_delete', 0);
-                                });
-                            });
                         });
                     })->count(),
                 ],
@@ -273,17 +197,6 @@ class DapodikController extends Controller
                             });
                             $query->where('sekolah_id', $user->sekolah_id);
                             $query->where('jenis_rombel', 51);
-                            $query->whereHas('wali_kelas', function($query) use ($user){
-                                $query->where('soft_delete', 0);
-                                $query->whereHas('ptk_terdaftar', function($query) use ($user){
-                                    $query->where('sekolah_id', $user->sekolah_id);
-                                    $query->whereHas('tahun_ajaran', function($query){
-                                        $query->where('periode_aktif', 1);
-                                    });
-                                    $query->whereNull('jenis_keluar_id');
-                                    $query->where('soft_delete', 0);
-                                });
-                            });
                         });
                         $query->whereHas('pd', function($query) use ($user){
                             $query->where('soft_delete', 0);
@@ -291,6 +204,17 @@ class DapodikController extends Controller
                                 $query->where('sekolah_id', $user->sekolah_id);
                                 $query->where('soft_delete', 0);
                                 $query->whereNull('jenis_keluar_id');
+                            });
+                            $query->whereHas('anggota_rombel', function($query) use ($user){
+                                $query->where('soft_delete', 0);
+                                $query->whereHas('rombongan_belajar', function($query) use ($user){
+                                    $query->where('soft_delete', 0);
+                                    $query->where('sekolah_id', $user->sekolah_id);
+                                    $query->whereHas('semester', function($query){
+                                        $query->where('periode_aktif', 1);
+                                    });
+                                    $query->whereIn('jenis_rombel', [1, 8, 9, 16]);
+                                });
                             });
                         });
                     })->count(),
