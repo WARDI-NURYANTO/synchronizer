@@ -1,0 +1,7 @@
+{
+  "name": "e-Rapor SMK Synchronizer",
+  "description": "Alat sinkronisasi data Dapodik lokal ke aplikasi e-Rapor SMK Versi 8.",
+  "capabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

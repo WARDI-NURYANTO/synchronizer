@@ -4,17 +4,16 @@ defineOptions({
   inheritAttrs: false,
 })
 
+const attrs = useAttrs()
+const rawId = useId()
 
-// const { class: _class, label, variant: _, ...restAttrs } = useAttrs()
 const elementId = computed(() => {
-  const attrs = useAttrs()
   const _elementIdToken = attrs.id
-  const _id = useId()
   
-  return _elementIdToken ? `app-autocomplete-${ _elementIdToken }` : _id
+  return _elementIdToken ? `app-autocomplete-${ _elementIdToken }` : rawId
 })
 
-const label = computed(() => useAttrs().label)
+const label = computed(() => attrs.label)
 </script>
 
 <template>

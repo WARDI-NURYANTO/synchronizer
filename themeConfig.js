@@ -12,7 +12,7 @@ export const { themeConfig, layoutConfig } = defineThemeConfig({
   app: {
     title: 'Synchronizer',
     logo: logo,
-    url: app_url,
+    url: typeof window !== 'undefined' ? (window.app_url || window.location?.origin || '') : '',
     //logo: h('div', { innerHTML: logo, style: 'line-height:0; color: rgb(var(--v-global-theme-primary))' }),
     contentWidth: ContentWidth.Boxed,
     contentLayoutNav: AppContentLayoutNav.Vertical,

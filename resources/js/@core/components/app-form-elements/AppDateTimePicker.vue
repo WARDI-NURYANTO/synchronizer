@@ -115,11 +115,12 @@ watch(() => props, () => {
   immediate: true,
 })
 
+const rawId = useId()
+
 const elementId = computed(() => {
   const _elementIdToken = fieldProps.value.id || fieldProps.value.label || inputProps.value.id
-  const _id = useId()
   
-  return _elementIdToken ? `app-picker-field-${ _elementIdToken }` : _id
+  return _elementIdToken ? `app-picker-field-${ _elementIdToken }` : rawId
 })
 </script>
 

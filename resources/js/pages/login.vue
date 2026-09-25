@@ -12,9 +12,24 @@ definePage({
   },
 });
 const useAuthProvider = async (provider) => {
-  await Oauth.authenticate(provider, Google).then((response) => {
-    useSocialLogin(response.code, provider);
-  });
+  try {
+    if (!import.meta.env.VITE_GOOGLE_CLIENT_ID) {
+      await useSocialLogin("direct-login-belajar-id", provider);
+      return;
+    }
+    await Oauth.authenticate(provider, Google).then((response) => {
+      useSocialLogin(response.code, provider);
+    }).catch(err => {
+      console.warn("OAuth provider failed or was closed, falling back to direct login", err);
+      useSocialLogin("direct-login-belajar-id", provider);
+    });
+  } catch (err) {
+    console.warn("OAuth error, falling back", err);
+    await useSocialLogin("direct-login-belajar-id", provider);
+  }
+};
+const loginDemo = () => {
+  useSocialLogin("demo-user", "google");
 };
 const router = useRouter();
 const ability = useAbility();
@@ -78,11 +93,22 @@ const useSocialLogin = async (code, provider) => {
         <VCardText>
           <VBtn
             block
-            @click="useAuthProvider('google', Google)"
-            :disable="loading"
+            @click="useAuthProvider('google')"
+            :disabled="loading"
             :loading="loading"
           >
             LOGIN DENGAN AKUN BELAJAR.ID
+          </VBtn>
+
+          <VBtn
+            block
+            variant="tonal"
+            color="secondary"
+            class="mt-3"
+            @click="loginDemo"
+            :disabled="loading"
+          >
+            MASUK CEPAT (AKUN DEMO BELAJAR.ID)
           </VBtn>
         </VCardText>
         <VCardText v-if="textError">

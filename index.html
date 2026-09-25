@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8" />
+    <link rel="icon" href="/favicon.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>e-Rapor SMK Synchronizer</title>
+    <meta name="description" content="Alat sinkronisasi data Dapodik lokal ke aplikasi e-Rapor SMK Versi 8." />
+    <meta property="og:title" content="e-Rapor SMK Synchronizer" />
+    <meta property="og:description" content="Alat sinkronisasi data Dapodik lokal ke aplikasi e-Rapor SMK Versi 8." />
+    <link rel="stylesheet" type="text/css" href="/loader.css" />
+</head>
+
+<body>
+    <div id="app">
+        <div id="loading-bg">
+            <div class="loading-logo">
+                <img src="/images/logo.png" width="86" alt="e-Rapor Logo">
+            </div>
+            <div class="loading">
+                <div class="effect-1 effects"></div>
+                <div class="effect-2 effects"></div>
+                <div class="effect-3 effects"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const loaderColor = localStorage.getItem('vuexy-initial-loader-bg') || '#FFFFFF'
+        const primaryColor = localStorage.getItem('vuexy-initial-loader-color') || '#7367F0'
+
+        if (loaderColor)
+            document.documentElement.style.setProperty('--initial-loader-bg', loaderColor)
+
+        if (primaryColor)
+            document.documentElement.style.setProperty('--initial-loader-color', primaryColor)
+        window.app_url = window.location.origin
+    </script>
+    <script type="module" src="/resources/js/main.js"></script>
+</body>
+
+</html>

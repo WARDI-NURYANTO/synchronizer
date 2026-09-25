@@ -4,15 +4,16 @@ defineOptions({
   inheritAttrs: false,
 })
 
+const attrs = useAttrs()
+const rawId = useId()
+
 const elementId = computed(() => {
-  const attrs = useAttrs()
   const _elementIdToken = attrs.id
-  const _id = useId()
   
-  return _elementIdToken ? `app-combobox-${ _elementIdToken }` : _id
+  return _elementIdToken ? `app-combobox-${ _elementIdToken }` : rawId
 })
 
-const label = computed(() => useAttrs().label)
+const label = computed(() => attrs.label)
 </script>
 
 <template>
